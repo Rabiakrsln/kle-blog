@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kle_blog_app
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: kle_blog_db
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: kle_blog
+      MYSQL_USER: kle_user
+      MYSQL_PASSWORD: kle_password
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - kle_blog_db_data:/var/lib/mysql
+
+volumes:
+  kle_blog_db_data:
