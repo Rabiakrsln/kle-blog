@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\CategoryResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Category;
 
 class CategoryController extends Controller
@@ -14,21 +14,20 @@ class CategoryController extends Controller
             ->orderBy('name')
             ->get();
 
-        return response()->json($categories);
+        return CategoryResource::collection($categories);
     }
 
-    public function show(string $slug)
+    public function show(Category $category)
     {
-        $category = Category::with([
+        $category->load([
             'posts' => function ($query) {
                 $query->where('status', 'approved')
                     ->latest();
             }
-        ])
-        ->where('slug', $slug)
-        ->where('is_active', true)
-        ->firstOrFail();
+        ]);
+        
+        abort_unless($category->is_active, 404);
 
-        return response()->json($category);
+        return new CategoryResource($category);
     }
 }

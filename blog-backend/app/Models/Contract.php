@@ -17,7 +17,7 @@ class Contract extends Model
         'published_at',
     ];
 
-    public function casts(): array
+    protected function casts(): array
     {
         return [
             'is_active' => 'boolean',

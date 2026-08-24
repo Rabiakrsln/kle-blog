@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Comment extends Model
 {
@@ -24,6 +25,21 @@ class Comment extends Model
         return [
             'approved_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Comment $comment) {
+            if ($comment->status == 'approved') {
+                if (!$comment->approved_at || $comment->isDirty('status')) {
+                    $comment->approved_at = now();
+                    $comment->approved_by = Auth::id();
+                }
+            } else {
+                $comment->approved_at = null;
+                $comment->approved_by = null;
+            }
+        });
     }
 
     public function post(): BelongsTo

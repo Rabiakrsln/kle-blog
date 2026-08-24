@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Override;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Post extends Model
 {
@@ -43,9 +43,9 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function comments(): BelongsTo 
+    public function comments(): HasMany 
     {
-        return $this->belongsTo(Comment::class);
+        return $this->HasMany(Comment::class);
     }
 
     public function approvedBy(): BelongsTo
