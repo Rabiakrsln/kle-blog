@@ -1,0 +1,22 @@
+services:
+  frontend_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kle_blog_frontend
+    ports:
+      - "8001:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - frontend_vite
+
+  frontend_vite:
+    image: node:22-alpine
+    container_name: kle_blog_frontend_vite
+    working_dir: /var/www/html
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/var/www/html
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
