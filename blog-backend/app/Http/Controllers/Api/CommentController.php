@@ -10,10 +10,16 @@ use App\Models\Comment;
 
 class CommentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $comments = Comment::with('user')
-            ->where('status', 'approved')
+        $query = Comment::with('user')
+            ->where('status', 'approved');
+
+        if ($request->filled('post_id')) {
+            $query->where('post_id', $request->post_id);
+        }
+
+        $comments = $query
             ->latest()
             ->get();
 
@@ -34,5 +40,15 @@ class CommentController extends Controller
         return new CommentResource(
             $comment->load('user')
         );
+    }
+
+    public function mine(Request $request)
+    {
+        $comments = Comment::with(['user', 'post'])
+            ->where('user_id', $request->user()->id)
+            ->latest()
+            ->get();
+
+        return CommentResource::collection($comments);
     }
 }

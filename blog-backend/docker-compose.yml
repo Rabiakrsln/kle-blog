@@ -10,6 +10,8 @@ services:
       - .:/var/www/html
     depends_on:
       - db
+    networks:
+      - kle_blog_network
 
   db:
     image: mysql:8.0
@@ -24,6 +26,12 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - kle_blog_db_data:/var/lib/mysql
+    networks:
+      - kle_blog_network
 
 volumes:
   kle_blog_db_data:
+
+networks:
+  kle_blog_network:
+    external: true

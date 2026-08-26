@@ -42,4 +42,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     })->name('auth.user');
+
+    Route::get('/user/posts', [PostController::class, 'mine'])
+        ->name('user.posts');
+
+    Route::get('/user/comments', [CommentController::class, 'mine'])
+        ->name('user.comments');
+
+    Route::post('/posts', [PostController::class, 'store']) 
+        ->name('posts.store');
 });

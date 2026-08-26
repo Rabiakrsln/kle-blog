@@ -12,11 +12,20 @@ class CommentResource extends JsonResource
         return [
             'id' => $this->id,
             'content' => $this->content,
+            'status' => $this->status,
             'approved_at' => $this->approved_at,
 
             'user' => new UserResource(
                 $this->whenLoaded('user')
             ),
+
+            'post' => $this->whenLoaded('post', function () {
+                return [
+                    'id' => $this->post->id,
+                    'title' => $this->post->title,
+                    'slug' => $this->post->slug,
+                ];
+            }),
         ];
     }
 }

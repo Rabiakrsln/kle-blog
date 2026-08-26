@@ -17,13 +17,6 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // $adminRole = Role::firstOrCreate([
-        //     'name' => 'admin',
-        //     'guard_name' => 'web',
-        // ]);
-
-
-
         Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'user']);
         User::factory(10)->create();

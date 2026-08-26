@@ -1,0 +1,19 @@
+$kind: http-request
+name: http://localhost:8000/api/comments
+description: ""
+url: http://localhost:8000/api/comments
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"post_id\": 71,\r
+
+    \    \"content\": \"Comment API test yorumu\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: http://localhost:8000/api/comments
+order: 1787147852856

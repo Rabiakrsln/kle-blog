@@ -22,10 +22,11 @@ class CategoryController extends Controller
         $category->load([
             'posts' => function ($query) {
                 $query->where('status', 'approved')
+                    ->with('user')
                     ->latest();
             }
         ]);
-        
+
         abort_unless($category->is_active, 404);
 
         return new CategoryResource($category);
