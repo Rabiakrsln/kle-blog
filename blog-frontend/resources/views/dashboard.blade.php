@@ -5,473 +5,316 @@
 <section class="bg-gray-50">
     <div class="mx-auto max-w-5xl px-5 py-20">
 
-        <div class="mb-10">
+    <div class="mb-10">
 
-            <p class="text-sm font-semibold uppercase tracking-[2px] text-gray-500">
-                KLE BLOG
-            </p>
+        <p class="text-sm font-semibold uppercase tracking-[2px] text-gray-500">
+            KLE BLOG
+        </p>
 
-            <h1 class="mt-3 text-3xl font-bold text-gray-900">
-                Kullanıcı Paneli
-            </h1>
+        <h1 class="mt-3 text-3xl font-bold text-gray-900">
+            Kullanıcı Paneli
+        </h1>
 
-            <p class="mt-3 text-gray-600">
-                Hesap bilgilerini, yazılarını ve yorumlarını buradan görebilirsin.
-            </p>
+        <p class="mt-3 text-gray-600">
+            Hesap bilgilerini, yazılarını ve yorumlarını buradan görebilirsin.
+        </p>
 
-        </div>
-
-        <div class="rounded-2xl border border-gray-200 bg-white p-8">
-
-            <h2 class="text-xl font-bold text-gray-900">
-                Hesap Bilgileri
-            </h2>
-
-            <div class="mt-6 grid gap-6 sm:grid-cols-2">
-
-                <div>
-                    <p class="text-sm text-gray-500">
-                        Ad Soyad
-                    </p>
-
-                    <p
-                        id="dashboard-user-name"
-                        class="mt-1 font-medium text-gray-900"
-                    >
-                        -
-                    </p>
-                </div>
+    </div>
 
 
-                <div>
-                    <p class="text-sm text-gray-500">
-                        E-posta
-                    </p>
+    <div class="rounded-2xl border border-gray-200 bg-white p-8">
 
-                    <p
-                        id="dashboard-user-email"
-                        class="mt-1 font-medium text-gray-900"
-                    >
-                        -
-                    </p>
-                </div>
+        <h2 class="text-xl font-bold text-gray-900">
+            Hesap Bilgileri
+        </h2>
 
+        @if (session('success'))
+            <div class="mt-6 rounded-xl border border-green-200 bg-green-50 p-4">
+                <p class="text-sm text-green-700">
+                    {{ session('success') }}
+                </p>
             </div>
+        @endif
 
-        </div>
+        @if ($errors->has('profile'))
+            <div class="mt-6 rounded-xl border border-red-200 bg-red-50 p-4">
+                <p class="text-sm text-red-700">
+                    {{ $errors->first('profile') }}
+                </p>
+            </div>
+        @endif
 
-        <div class="mt-8 rounded-2xl border border-gray-200 bg-white p-8">
 
-            <div class="flex items-center justify-between">
+        <form
+            method="POST"
+            action="{{ route('dashboard.profile.update') }}"
+            class="mt-6 space-y-6"
+        >
 
-                <div>
+            @csrf
+            @method('PUT')
 
-                    <p class="text-sm font-semibold uppercase tracking-[2px] text-gray-500">
-                        İçerikler
-                    </p>
 
-                    <h2 class="mt-2 text-2xl font-bold text-gray-900">
-                        Yazılarım
-                    </h2>
+            <div>
 
-                </div>
-
-                <span
-                    id="posts-count"
-                    class="text-sm text-gray-500"
+                <label
+                    for="name"
+                    class="block text-sm font-medium text-gray-700"
                 >
-                    0 yazı
-                </span>
+                    Ad Soyad
+                </label>
+
+                <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value="{{ old('name', $user['name'] ?? '') }}"
+                    required
+                    class="mt-2 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-gray-900 focus:outline-none"
+                >
+
+                @error('name')
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ $message }}
+                    </p>
+                @enderror
 
             </div>
 
 
-            <div
-                id="my-posts"
-                class="mt-6 space-y-4"
-            >
+            <div>
 
-                <p class="text-sm text-gray-500">
-                    Yazılar yükleniyor...
+                <label
+                    for="email"
+                    class="block text-sm font-medium text-gray-700"
+                >
+                    E-posta
+                </label>
+
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value="{{ old('email', $user['email'] ?? '') }}"
+                    required
+                    class="mt-2 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-gray-900 focus:outline-none"
+                >
+
+                @error('email')
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ $message }}
+                    </p>
+                @enderror
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="mt-2 block w-full rounded-xl bg-black px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800 sm:w-auto"
+            >
+                Profili Güncelle
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="mt-8 rounded-2xl border border-gray-200 bg-white p-8">
+
+        <div class="flex items-center justify-between">
+
+            <div>
+
+                <p class="text-sm font-semibold uppercase tracking-[2px] text-gray-500">
+                    İçerikler
                 </p>
 
+                <h2 class="mt-2 text-2xl font-bold text-gray-900">
+                    Yazılarım
+                </h2>
+
             </div>
+
+            <span class="text-sm text-gray-500">
+                {{ count($posts) }} yazı
+            </span>
 
         </div>
 
 
-        <div class="mt-8 rounded-2xl border border-gray-200 bg-white p-8">
+        <div class="mt-6 space-y-4">
 
-            <div class="flex items-center justify-between">
+            @forelse ($posts as $post)
 
-                <div>
+                <article class="rounded-xl border border-gray-200 p-6">
 
-                    <p class="text-sm font-semibold uppercase tracking-[2px] text-gray-500">
-                        Etkileşimler
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+
+                        <div>
+
+                            <h3 class="text-lg font-bold text-gray-900">
+                                {{ $post['title'] ?? '' }}
+                            </h3>
+
+                            <p class="mt-2 text-sm text-gray-500">
+                                {{ $post['category']['name'] ?? 'Genel' }}
+                            </p>
+
+                        </div>
+
+
+                        @if (($post['status'] ?? '') === 'approved')
+
+                            <span class="w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+                                Onaylandı
+                            </span>
+
+                        @else
+
+                            <span class="w-fit rounded-full bg-yellow-50 px-3 py-1 text-xs font-medium text-yellow-700">
+                                Bekliyor
+                            </span>
+
+                        @endif
+
+                    </div>
+
+
+                    @if (($post['status'] ?? '') === 'approved' && !empty($post['slug']))
+
+                        <div class="mt-5 border-t border-gray-100 pt-4">
+
+                            <a
+                                href="{{ url('/posts/' . $post['slug']) }}"
+                                class="text-sm font-semibold text-gray-900 hover:underline"
+                            >
+                                Yazıyı Gör →
+                            </a>
+
+                        </div>
+
+                    @endif
+
+                </article>
+
+            @empty
+
+                <div class="rounded-xl border border-gray-200 bg-gray-50 p-6">
+
+                    <p class="text-sm text-gray-500">
+                        Henüz yazdığın bir yazı bulunmuyor.
                     </p>
-
-                    <h2 class="mt-2 text-2xl font-bold text-gray-900">
-                        Yorumlarım
-                    </h2>
 
                 </div>
 
-                <span
-                    id="comments-count"
-                    class="text-sm text-gray-500"
-                >
-                    0 yorum
-                </span>
-
-            </div>
-
-
-            <div
-                id="my-comments"
-                class="mt-6 space-y-4"
-            >
-
-                <p class="text-sm text-gray-500">
-                    Yorumlar yükleniyor...
-                </p>
-
-            </div>
+            @endforelse
 
         </div>
 
     </div>
-</section>
 
+    <div class="mt-8 rounded-2xl border border-gray-200 bg-white p-8">
 
-<script>
+        <div class="flex items-center justify-between">
 
-document.addEventListener('DOMContentLoaded', async function () {
+            <div>
 
-    const token = localStorage.getItem('token');
+                <p class="text-sm font-semibold uppercase tracking-[2px] text-gray-500">
+                    Etkileşimler
+                </p>
 
-    const user = JSON.parse(
-        localStorage.getItem('user') || 'null'
-    );
+                <h2 class="mt-2 text-2xl font-bold text-gray-900">
+                    Yorumlarım
+                </h2>
 
+            </div>
 
-    if (!token || !user) {
+            <span class="text-sm text-gray-500">
+                {{ count($comments) }} yorum
+            </span>
 
-        window.location.href = '/login';
+        </div>
 
-        return;
 
-    }
+        <div class="mt-6 space-y-4">
 
-    document.getElementById('dashboard-user-name').textContent =
-        user.name ?? '-';
+            @forelse ($comments as $comment)
 
-    document.getElementById('dashboard-user-email').textContent =
-        user.email ?? '-';
+                <article class="rounded-xl border border-gray-200 p-6">
 
+                    <div class="flex items-start justify-between gap-4">
 
-    const postsContainer =
-        document.getElementById('my-posts');
+                        <div class="flex-1">
 
-    const commentsContainer =
-        document.getElementById('my-comments');
-
-    const postsCount =
-        document.getElementById('posts-count');
-
-    const commentsCount =
-        document.getElementById('comments-count');
-
-
-    async function loadDashboardData() {
-
-        try {
-
-            const [postsResponse, commentsResponse] =
-                await Promise.all([
-
-                    fetch('http://localhost:8000/api/user/posts', {
-                        headers: {
-                            'Authorization': 'Bearer ' + token,
-                            'Accept': 'application/json'
-                        }
-                    }),
-
-                    fetch('http://localhost:8000/api/user/comments', {
-                        headers: {
-                            'Authorization': 'Bearer ' + token,
-                            'Accept': 'application/json'
-                        }
-                    })
-
-                ]);
-
-            if (
-                postsResponse.status === 401 ||
-                commentsResponse.status === 401
-            ) {
-
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-
-                window.location.href = '/login';
-
-                return;
-
-            }
-
-
-            const postsData =
-                await postsResponse.json();
-
-            const commentsData =
-                await commentsResponse.json();
-
-            const posts =
-                postsData.data ?? [];
-
-            postsCount.textContent =
-                posts.length + ' yazı';
-
-
-            postsContainer.innerHTML = '';
-
-
-            if (posts.length === 0) {
-
-                postsContainer.innerHTML = `
-                    <div class="rounded-xl border border-gray-200 bg-gray-50 p-6">
-                        <p class="text-sm text-gray-500">
-                            Henüz yazdığın bir yazı bulunmuyor.
-                        </p>
-                    </div>
-                `;
-
-            } else {
-
-                posts.forEach(function (post) {
-
-                    const status =
-                        post.status ?? 'pending';
-
-
-                    const statusText =
-                        status === 'approved'
-                            ? 'Onaylandı'
-                            : 'Bekliyor';
-
-
-                    const statusClass =
-                        status === 'approved'
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-yellow-50 text-yellow-700';
-
-
-                    const publishedDate =
-                        post.created_at
-                            ? new Date(
-                                post.created_at
-                            ).toLocaleDateString('tr-TR')
-                            : '';
-
-
-                    const article =
-                        document.createElement('article');
-
-
-                    article.className =
-                        'rounded-xl border border-gray-200 p-6 transition hover:border-gray-300 hover:shadow-sm';
-
-
-                    article.innerHTML = `
-
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-
-                            <div>
-
-                                <h3 class="text-lg font-bold text-gray-900">
-                                    ${post.title ?? ''}
-                                </h3>
-
-                                <p class="mt-2 text-sm text-gray-500">
-                                    ${post.category?.name ?? 'Genel'}
-                                </p>
-
-                            </div>
-
-
-                            <span class="w-fit rounded-full px-3 py-1 text-xs font-medium ${statusClass}">
-                                ${statusText}
-                            </span>
-
-                        </div>
-
-
-                        <div class="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
-
-                            <span class="text-xs text-gray-400">
-                                ${publishedDate}
-                            </span>
-
-                            ${
-                                status === 'approved'
-                                ? `
-                                    <a
-                                        href="/posts/${post.id}"
-                                        class="text-sm font-semibold text-gray-900 hover:underline"
-                                    >
-                                        Yazıyı Gör →
-                                    </a>
-                                `
-                                : ''
-                            }
-
-                        </div>
-
-                    `;
-
-
-                    postsContainer.appendChild(article);
-
-                });
-
-            }
-
-            const comments =
-                commentsData.data ?? [];
-
-            commentsCount.textContent =
-                comments.length + ' yorum';
-
-
-            commentsContainer.innerHTML = '';
-
-
-            if (comments.length === 0) {
-
-                commentsContainer.innerHTML = `
-                    <div class="rounded-xl border border-gray-200 bg-gray-50 p-6">
-                        <p class="text-sm text-gray-500">
-                            Henüz yaptığın bir yorum bulunmuyor.
-                        </p>
-                    </div>
-                `;
-
-            } else {
-
-                comments.forEach(function (comment) {
-
-                    const status =
-                        comment.status ?? 'pending';
-
-
-                    const statusText =
-                        status === 'approved'
-                            ? 'Onaylandı'
-                            : 'Bekliyor';
-
-
-                    const statusClass =
-                        status === 'approved'
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-yellow-50 text-yellow-700';
-
-
-                    const commentDate =
-                        comment.created_at
-                            ? new Date(
-                                comment.created_at
-                            ).toLocaleDateString('tr-TR')
-                            : '';
-
-
-                    const article =
-                        document.createElement('article');
-
-
-                    article.className =
-                        'rounded-xl border border-gray-200 p-6';
-
-
-                    article.innerHTML = `
-
-                        <div class="flex items-start justify-between gap-4">
-
-                            <div class="flex-1">
-
-                                <p class="text-sm leading-7 text-gray-700">
-                                    ${comment.content ?? ''}
-                                </p>
-
-                            </div>
-
-
-                            <span class="shrink-0 rounded-full px-3 py-1 text-xs font-medium ${statusClass}">
-                                ${statusText}
-                            </span>
-
-                        </div>
-
-
-                        <div class="mt-5 flex flex-col gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-
-                            <p class="text-sm text-gray-500">
-
-                                ${
-                                    comment.post?.title
-                                        ? `Yazı: ${comment.post.title}`
-                                        : 'Yazı bilgisi bulunamadı.'
-                                }
-
+                            <p class="text-sm leading-7 text-gray-700">
+                                {{ $comment['content'] ?? '' }}
                             </p>
 
-
-                            <span class="text-xs text-gray-400">
-                                ${commentDate}
-                            </span>
-
                         </div>
 
-                    `;
+
+                        @if (($comment['status'] ?? '') === 'approved')
+
+                            <span class="shrink-0 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+                                Onaylandı
+                            </span>
+
+                        @else
+
+                            <span class="shrink-0 rounded-full bg-yellow-50 px-3 py-1 text-xs font-medium text-yellow-700">
+                                Bekliyor
+                            </span>
+
+                        @endif
+
+                    </div>
 
 
-                    commentsContainer.appendChild(article);
+                    <div class="mt-5 flex flex-col gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
 
-                });
+                        <p class="text-sm text-gray-500">
 
-            }
+                            @if (!empty($comment['post']['title']))
+                                Yazı: {{ $comment['post']['title'] }}
+                            @else
+                                Yazı bilgisi bulunamadı.
+                            @endif
+
+                        </p>
 
 
-        } catch (error) {
+                        @if (!empty($comment['created_at']))
 
-            console.error(error);
+                            <span class="text-xs text-gray-400">
+                                {{ \Carbon\Carbon::parse($comment['created_at'])->translatedFormat('d F Y') }}
+                            </span>
 
+                        @endif
 
-            postsContainer.innerHTML = `
-                <div class="rounded-xl border border-red-200 bg-red-50 p-6">
-                    <p class="text-sm text-red-600">
-                        Yazılar yüklenirken bir hata oluştu.
+                    </div>
+
+                </article>
+
+            @empty
+
+                <div class="rounded-xl border border-gray-200 bg-gray-50 p-6">
+
+                    <p class="text-sm text-gray-500">
+                        Henüz yaptığın bir yorum bulunmuyor.
                     </p>
+
                 </div>
-            `;
 
+            @endforelse
 
-            commentsContainer.innerHTML = `
-                <div class="rounded-xl border border-red-200 bg-red-50 p-6">
-                    <p class="text-sm text-red-600">
-                        Yorumlar yüklenirken bir hata oluştu.
-                    </p>
-                </div>
-            `;
+        </div>
 
-        }
+    </div>
 
-    }
+</div>
 
-
-    loadDashboardData();
-
-});
-
-</script>
+</section>
 
 @endsection

@@ -3,17 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
-use App\Filament\Resources\PostResource\RelationManagers;
 use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
-use Filament\Notifications\Notification;
 
 class PostResource extends Resource
 {
@@ -70,7 +68,7 @@ class PostResource extends Resource
                     ->label('İçerik')
                     ->rows(8)
                     ->required(),
-                
+
                 Forms\Components\TextInput::make('image')
                     ->label('Görsel'),
 
@@ -91,7 +89,6 @@ class PostResource extends Resource
                     ->label('Yayınlanma Tarihi')
                     ->disabled(fn () => Auth::user()?->hasRole('user'))
                     ->dehydrated(),
-                
             ]);
     }
 
@@ -162,11 +159,15 @@ class PostResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Post $record) =>
-                        Auth::user()?->hasRole('admin') &&
-                        $record->status === 'pending'
+                        Auth::user()?->can('approve', $record)
                     )
                     ->requiresConfirmation()
                     ->action(function (Post $record) {
+                        abort_unless(
+                            Auth::user()?->can('approve', $record),
+                            403
+                        );
+
                         $record->update([
                             'status' => 'approved',
                             'approved_by' => Auth::id(),
@@ -175,7 +176,7 @@ class PostResource extends Resource
                         ]);
 
                         Notification::make()
-                            ->title('Post onaylandı')
+                            ->title('Post onaylandı.')
                             ->success()
                             ->send();
                     }),
@@ -185,11 +186,15 @@ class PostResource extends Resource
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->visible(fn (Post $record) =>
-                        Auth::user()?->hasRole('admin') &&
-                        $record->status === 'pending'
+                        Auth::user()?->can('reject', $record)
                     )
                     ->requiresConfirmation()
                     ->action(function (Post $record) {
+                        abort_unless(
+                            Auth::user()?->can('reject', $record),
+                            403
+                        );
+
                         $record->update([
                             'status' => 'rejected',
                             'approved_by' => Auth::id(),
@@ -197,7 +202,7 @@ class PostResource extends Resource
                         ]);
 
                         Notification::make()
-                            ->title('Post reddedildi')
+                            ->title('Post reddedildi.')
                             ->danger()
                             ->send();
                     }),

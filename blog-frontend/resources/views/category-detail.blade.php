@@ -94,7 +94,7 @@
                             </span>
 
                             <a
-                                href="/posts/{{ $post['id'] }}"
+                                href="/posts/{{ $post['slug'] }}"
                                 class="text-sm font-semibold text-gray-900 transition hover:underline"
                             >
                                 Yazıyı Oku →

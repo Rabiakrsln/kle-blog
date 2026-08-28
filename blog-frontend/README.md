@@ -1,58 +1,240 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# KLE Blog Frontend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+KLE Blog projesinin kullanıcı arayüzüdür.
 
-## About Laravel
+Frontend Laravel ile geliştirilmiştir ve backend ile yalnızca API üzerinden haberleşir.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Teknolojiler
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* PHP 8.4
+* Laravel 13
+* Livewire
+* Tailwind CSS
+* Vite
+* Docker
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Mimari
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Frontend doğrudan backend veritabanına bağlanmaz.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```text
+Browser
+   ↓
+Laravel Frontend
+   ↓
+Backend API
+   ↓
+MySQL
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Backend:
 
-## Contributing
+```text
+http://localhost:8000
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Frontend:
 
-## Code of Conduct
+```text
+http://localhost:8001
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Gereksinimler
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+* Docker Desktop
+* Git
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Kurulum
+
+Proje klasöründen:
+
+```bash
+docker network create kle_blog_network
+```
+
+Frontend klasörüne geçin:
+
+```bash
+cd blog-frontend
+```
+
+Environment dosyasını oluşturun:
+
+```bash
+copy .env.example .env
+```
+
+Frontend container'larını oluşturun:
+
+```bash
+docker compose up -d --build
+```
+
+Container durumunu kontrol edin:
+
+```bash
+docker compose ps
+```
+
+---
+
+## Frontend Adresi
+
+```text
+http://localhost:8001
+```
+
+Vite development server:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Backend API
+
+Frontend backend API'ye aşağıdaki adres üzerinden bağlanır:
+
+```text
+http://localhost:8000
+```
+
+API adresi `.env` içerisindeki `BACKEND_API_URL` değişkeninden alınır.
+
+Örnek:
+
+```env
+APP_URL=http://localhost:8001
+BACKEND_API_URL=http://localhost:8000
+```
+
+---
+
+## Session ve Cache
+
+Frontend veritabanına bağlanmaz.
+
+Session dosya tabanlı olarak tutulur:
+
+```env
+SESSION_DRIVER=file
+CACHE_STORE=file
+QUEUE_CONNECTION=sync
+```
+
+Authentication sırasında backend tarafından oluşturulan Sanctum token frontend sunucusundaki Laravel session içerisinde tutulur.
+
+Token browser JavaScript'ine veya `localStorage` içerisine gönderilmez.
+
+---
+
+## Authentication
+
+Kullanıcı işlemleri:
+
+```text
+Register
+Login
+Logout
+Profile
+Dashboard
+```
+
+Frontend authentication işlemlerini Laravel Controller/Livewire üzerinden gerçekleştirir.
+
+Login sonrasında API token server-side session içerisinde saklanır.
+
+Logout işleminde backend API logout isteği gönderilir ve session içerisindeki token temizlenir.
+
+---
+
+## API Tabanlı Sayfalar
+
+Frontend aşağıdaki backend API özelliklerini kullanır:
+
+* Blog yazıları
+* Kategori listeleri
+* Kategori detayları
+* Blog detayları
+* Yorumlar
+* Kullanıcı dashboard
+* Kullanıcı yazıları
+* Kullanıcı yorumları
+* Kullanıcı profil güncelleme
+* Kullanım koşulları
+
+---
+
+## Docker Network
+
+Backend ve frontend aynı Docker network üzerinde çalışır:
+
+```text
+kle_blog_network
+```
+
+Network mevcut değilse:
+
+```bash
+docker network create kle_blog_network
+```
+
+Kontrol:
+
+```bash
+docker network inspect kle_blog_network
+```
+
+---
+
+## Durdurma
+
+Frontend container'larını durdurmak için:
+
+```bash
+docker compose down
+```
+
+Tekrar başlatmak için:
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Backend ile Birlikte Çalıştırma
+
+Önce backend'i çalıştırın:
+
+```bash
+cd blog-backend
+
+docker compose up -d --build
+docker compose exec app composer install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+Sonra frontend'i çalıştırın:
+
+```bash
+cd ../blog-frontend
+
+docker compose up -d --build
+```
+
+Uygulamalar:
+
+```text
+Frontend: http://localhost:8001
+Backend:  http://localhost:8000
+Admin:    http://localhost:8000/admin
+```

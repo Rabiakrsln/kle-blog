@@ -3,17 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CommentResource\Pages;
-use App\Filament\Resources\CommentResource\RelationManagers;
 use App\Models\Comment;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
-use Filament\Notifications\Notification;
 
 class CommentResource extends Resource
 {
@@ -55,7 +53,7 @@ class CommentResource extends Resource
                     ->label('Yorum')
                     ->rows(5)
                     ->required(),
-                
+
                 Forms\Components\Select::make('status')
                     ->label('Durum')
                     ->options([
@@ -88,7 +86,7 @@ class CommentResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->limit(40),
-                    
+
                 Tables\Columns\TextColumn::make('content')
                     ->label('Yorum')
                     ->limit(50),
@@ -134,11 +132,15 @@ class CommentResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Comment $record) =>
-                        Auth::user()?->hasRole('admin') &&
-                        $record->status === 'pending'
+                        Auth::user()?->can('approve', $record)
                     )
                     ->requiresConfirmation()
                     ->action(function (Comment $record) {
+                        abort_unless(
+                            Auth::user()?->can('approve', $record),
+                            403
+                        );
+
                         $record->update([
                             'status' => 'approved',
                             'approved_by' => Auth::id(),
@@ -150,19 +152,25 @@ class CommentResource extends Resource
                             ->success()
                             ->send();
                     }),
-                    
+
                 Tables\Actions\Action::make('reject')
                     ->label('Reddet')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->visible(fn (Comment $record) =>
-                        Auth::user()?->hasRole('admin') &&
-                        $record->status === 'pending'
+                        Auth::user()?->can('reject', $record)
                     )
                     ->requiresConfirmation()
                     ->action(function (Comment $record) {
+                        abort_unless(
+                            Auth::user()?->can('reject', $record),
+                            403
+                        );
+
                         $record->update([
                             'status' => 'rejected',
+                            'approved_by' => Auth::id(),
+                            'approved_at' => now(),
                         ]);
 
                         Notification::make()

@@ -45,4 +45,16 @@ class CommentPolicy
     {
         return $user->hasRole('admin');
     }
+
+    public function approve(User $user, Comment $comment): bool
+    {
+        return $user->hasRole('admin')
+            && $comment->status === 'pending';
+    }
+
+    public function reject(User $user, Comment $comment): bool
+    {
+        return $user->hasRole('admin')
+            && $comment->status === 'pending';
+    }
 }

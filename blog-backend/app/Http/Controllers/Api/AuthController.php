@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +20,10 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'agreement_accepted_at' => now(),
         ]);
+
+        $user->assignRole('user');
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -57,6 +61,18 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Çıkış başarılı.',
+        ]);
+    }
+
+    public function updateProfile(ProfileUpdateRequest $request)
+    {
+        $user = $request->user();
+
+        $user->update($request->validated());
+
+        return response()->json([
+            'message' => 'Profil başarıyla güncellendi.',
+            'user' => $user->fresh(),
         ]);
     }
 }

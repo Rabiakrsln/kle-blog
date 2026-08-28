@@ -1,85 +1,44 @@
 <?php
 
-use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
 
-Route::get('/', function () {
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
 
-    $response = Http::get(
-        'http://host.docker.internal:8000/api/posts'
-    );
+Route::get('/categories', [CategoryController::class, 'index']);
 
-    $posts = $response->successful()
-        ? $response->json('data', [])
-        : [];
+Route::get('/categories/{slug}', [CategoryController::class, 'show']);
 
-    return view('home', compact('posts'));
-});
+Route::get('/posts/create', [PostController::class, 'create']);
 
-Route::get('/categories', function () {
+Route::get('/posts/{slug}', [PostController::class, 'show']);
 
-    $response = Http::get(
-        'http://host.docker.internal:8000/api/categories'
-    );
+Route::get('/login', [LoginController::class, 'show'])
+    ->name('login');
 
-    $categories = $response->successful()
-        ? $response->json('data', [])
-        : [];
+Route::post('/login', [LoginController::class, 'login'])
+    ->name('login.submit');
 
-    return view('categories', compact('categories'));
-});
-
-Route::get('/categories/{id}', function ($id) {
-
-    $response = Http::get(
-        'http://host.docker.internal:8000/api/categories/' . $id
-    );
-
-    abort_unless($response->successful(), 404);
-
-    $category = $response->json('data');
-
-    return view('category-detail', compact('category'));
-});
-
-Route::get('/posts/create', function () {
-    return view('post-create');
-});
-
-Route::get('/posts/{id}', function ($id) {
-
-    $response = Http::get(
-        'http://host.docker.internal:8000/api/posts/' . $id
-    );
-
-    abort_unless($response->successful(), 404);
-
-    $post = $response->json('data');
-
-    $commentsResponse = Http::get(
-        'http://host.docker.internal:8000/api/comments',
-        [
-            'post_id' => $id,
-        ]
-    );
-
-    $comments = $commentsResponse->successful()
-        ? $commentsResponse->json('data', [])
-        : [];
-
-    return view('post-detail', compact('post', 'comments'));
-});
-
-Route::get('/login', function () {
-    return view('login');
-});
+Route::post('/logout', [LoginController::class, 'logout'])
+    ->name('logout');
 
 Route::get('/register', function () {
     return view('register');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
+Route::post('/posts', [PostController::class, 'store'])
+    ->name('posts.store');
 
+Route::get('/dashboard', [DashboardController::class, 'index']);
 
+Route::put('/dashboard/profile', [DashboardController::class, 'updateProfile'])
+    ->name('dashboard.profile.update');
+
+Route::get('/kullanim-kosullari', [ContractController::class, 'show'])
+    ->name('contract.show');

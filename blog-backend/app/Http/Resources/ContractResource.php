@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PostResource extends JsonResource
+class ContractResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -13,19 +13,10 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'excerpt' => $this->excerpt,
             'content' => $this->content,
-            'image' => $this->image,
-
-            'status' => $this->status,
-
-            'approved_by' => $this->approved_by,
-            'approved_at' => $this->approved_at,
+            'is_active' => $this->is_active,
             'published_at' => $this->published_at,
             'created_at' => $this->created_at,
-
-            'user' => new UserResource($this->whenLoaded('user')),
-            'category' => new CategoryResource($this->whenLoaded('category')),
         ];
     }
 }

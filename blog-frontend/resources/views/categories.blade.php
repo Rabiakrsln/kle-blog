@@ -22,7 +22,7 @@
                 @forelse($categories as $category)
 
                     <a
-                        href="/categories/{{ $category['id'] }}"
+                        href="/categories/{{ $category['slug'] }}"
                         class="group rounded-2xl border border-gray-200 bg-white p-7 transition duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-xl"
                     >
 

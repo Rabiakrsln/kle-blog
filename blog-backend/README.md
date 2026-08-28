@@ -1,58 +1,338 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# KLE Blog Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+KLE Blog projesinin Laravel API ve yönetim paneli backend uygulamasıdır.
 
-## About Laravel
+## Teknolojiler
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+* PHP 8.4
+* Laravel 13
+* MySQL 8
+* Laravel Sanctum
+* FilamentPHP
+* Spatie Laravel Permission
+* Docker
+* PHPUnit
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Proje Yapısı
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```text
+kle-blog/
+├── blog-backend/
+│   ├── Laravel API
+│   ├── Filament Admin Panel
+│   └── MySQL
+│
+└── blog-frontend/
+    └── Laravel Frontend
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Backend veritabanı işlemlerini gerçekleştirir ve frontend'e API üzerinden veri sağlar.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Gereksinimler
 
-## Code of Conduct
+* Docker Desktop
+* Git
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Projeyi lokal PHP veya MySQL kurulumu olmadan Docker üzerinden çalıştırabilirsiniz.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Kurulum
 
-## License
+Öncelikle proje klasörüne geçin:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cd kle-blog
+```
+
+Docker container'larının kullandığı ortak network'ü oluşturun:
+
+```bash
+docker network create kle_blog_network
+```
+
+> Network zaten oluşturulduysa bu komutu tekrar çalıştırmanız gerekmez.
+
+Backend klasörüne geçin:
+
+```bash
+cd blog-backend
+```
+
+Environment dosyasını oluşturun:
+
+```bash
+copy .env.example .env
+```
+
+Docker container'larını oluşturun:
+
+```bash
+docker compose up -d --build
+```
+
+Container durumunu kontrol edin:
+
+```bash
+docker compose ps
+```
+
+Composer bağımlılıklarını yükleyin:
+
+```bash
+docker compose exec app composer install
+```
+
+Application key oluşturun:
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+Veritabanı migration ve seed işlemlerini çalıştırın:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+Cache temizlemek için:
+
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+---
+
+## Backend Adresi
+
+API:
+
+```text
+http://localhost:8000
+```
+
+Filament Admin Panel:
+
+```text
+http://localhost:8000/admin
+```
+
+---
+
+## Admin Bilgileri
+
+Seed işlemi sonrasında aşağıdaki admin hesabı oluşturulur:
+
+```text
+E-posta: test@example.com
+Şifre: password
+```
+
+Admin hesabı `admin` rolüne sahiptir.
+
+Normal kullanıcılar ise `user` rolü ile oluşturulur.
+
+---
+
+## API
+
+Temel endpointler:
+
+```text
+GET    /api/posts
+GET    /api/posts/{slug}
+
+POST   /api/posts
+
+GET    /api/categories
+GET    /api/categories/{slug}
+
+GET    /api/comments
+POST   /api/comments
+
+POST   /api/register
+POST   /api/login
+POST   /api/logout
+
+GET    /api/user
+PUT    /api/user
+
+GET    /api/user/posts
+GET    /api/user/comments
+
+GET    /api/contracts/{slug}
+```
+
+API authentication işlemlerinde Laravel Sanctum token kullanılır.
+
+---
+
+## Filtreleme
+
+Post endpoint'i aşağıdaki filtreleri destekler:
+
+```text
+GET /api/posts?search=laravel
+GET /api/posts?category=teknoloji
+GET /api/posts?date=today
+GET /api/posts?date=week
+GET /api/posts?date=month
+GET /api/posts?date=year
+GET /api/posts?author=1
+```
+
+Pagination:
+
+```text
+GET /api/posts?page=1&per_page=10
+```
+
+---
+
+## Test
+
+Testleri çalıştırmak için:
+
+```bash
+docker compose exec app php artisan test
+```
+
+---
+
+## Docker
+
+Backend Docker servisleri:
+
+```text
+app
+db
+```
+
+Backend:
+
+```text
+localhost:8000
+```
+
+MySQL:
+
+```text
+localhost:3307
+```
+
+Docker içerisindeki MySQL bağlantı bilgileri:
+
+```text
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=kle_blog
+DB_USERNAME=kle_user
+DB_PASSWORD=kle_password
+```
+
+---
+
+## Seed Verileri
+
+`php artisan migrate:fresh --seed` çalıştırıldığında:
+
+* Admin kullanıcı
+* Normal kullanıcılar
+* Roller
+* Kategoriler
+* Onaylı ve yayınlanmış örnek blog yazıları
+* Örnek yorumlar
+* Kullanım koşulları
+
+oluşturulur.
+
+Seed işlemi sonrasında ana sayfanın boş kalmaması için onaylanmış ve yayınlanmış örnek blog yazıları oluşturulur.
+
+---
+
+## Postman
+
+Projede API endpointlerini test etmek için Postman collection kullanılabilir.
+
+Postman collection içerisinde aşağıdaki endpointler bulunur:
+
+* Register
+* Login
+* Logout
+* User
+* Posts
+* Post detail
+* Categories
+* Comments
+* User posts
+* User comments
+* Contracts
+
+Login sonrasında alınan Sanctum token, authentication gerektiren endpointlerde kullanılmalıdır.
+
+---
+
+## Yeniden Kurulum
+
+Veritabanını tamamen sıfırlayıp seed verilerini tekrar oluşturmak için:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+Cache temizlemek için:
+
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+Container'ları durdurmak için:
+
+```bash
+docker compose down
+```
+
+Container'ları tekrar başlatmak için:
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Projeyi GitHub'dan Temiz Klonda Çalıştırma
+
+```bash
+git clone <repository-url>
+cd kle-blog
+
+docker network create kle_blog_network
+
+cd blog-backend
+copy .env.example .env
+
+docker compose up -d --build
+
+docker compose exec app composer install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+Daha sonra frontend kurulumu için:
+
+```bash
+cd ../blog-frontend
+copy .env.example .env
+
+docker compose up -d --build
+```
+
+Uygulama adresleri:
+
+```text
+Frontend: http://localhost:8001
+Backend:  http://localhost:8000
+Admin:    http://localhost:8000/admin
+```

@@ -4,13 +4,13 @@ namespace App\Policies;
 
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class PostPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('user');
+        return $user->hasRole('admin')
+            || $user->hasRole('user');
     }
 
     public function view(User $user, Post $post): bool
@@ -21,7 +21,7 @@ class PostPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole('admin') 
+        return $user->hasRole('admin')
             || $user->hasRole('user');
     }
 
@@ -45,5 +45,17 @@ class PostPolicy
     public function forceDelete(User $user, Post $post): bool
     {
         return $user->hasRole('admin');
+    }
+
+    public function approve(User $user, Post $post): bool
+    {
+        return $user->hasRole('admin')
+            && $post->status === 'pending';
+    }
+
+    public function reject(User $user, Post $post): bool
+    {
+        return $user->hasRole('admin')
+            && $post->status === 'pending';
     }
 }
